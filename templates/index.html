@@ -2,6 +2,10 @@
 
 
 
+
+
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -52,11 +56,24 @@
         h1, h3 {
             color: #4a148c;
         }
+        .highlight {
+            background-color: #e0f7fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Renal Image Quality Classifier</h1>
+        <div class="highlight">
+            <p><strong>TASK</strong></p>
+            <p>Please upload at least ONE longitudinal view and transverse view of the kidney on the grading system. Feedback on the image quality will be given automatically.</p>
+        </div>
+        <div class="highlight">
+            <p><strong>DISCLOSURE</strong></p>
+            <p>This grading system is still under development and refinement. Currently the internal metric showed an accuracy of ~90% compared to human grading. It may generate inappropriate grading; if in doubt of the automated feedback, please contact Dr. Elaine Lee, primary investigator of this project at <a href="mailto:eyple77@hku.hk">eyple77@hku.hk</a>. (NB please screenshot the feedback for us to understand the discrepancy). Thank you.</p>
+        </div>
         <form action="/" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Name:</label>
@@ -76,6 +93,7 @@
         </form>
         <br>
 
+        
         {% if predicted_classes %}
         <h3>Predicted Classes:</h3>
         <div class="image-grid">
@@ -87,7 +105,10 @@
             {% endfor %}
         </div>
         {% endif %}
-
+        
+        <button onclick="window.open('https://hku.au1.qualtrics.com/jfe/form/SV_et7Q72ZFY1HLkH4', '_blank');" class="btn btn-primary">Share your feedback with us</button>
+        
+        
 <!-- Feedback section -->
 <hr>
 <h3>Student Feedback</h3>
@@ -110,13 +131,19 @@
             </td>
             <td>
                 {% for feedback in feedback_list %}
-                {{ feedback }}<br>
+                {{ feedback|safe }}<br><br>  <!-- Add an extra line break here -->
                 {% endfor %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+
+
+    </div>
+</body>
+</html>
 
 
     </div>
