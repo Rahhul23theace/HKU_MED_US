@@ -1,0 +1,124 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Renal Image Quality Classifier</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('uploads/augmented_image_22.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .container {
+            max-width: 960px;
+            margin: 30px auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .image-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-grid img {
+            margin: 10px;
+            max-width: 200px;
+            height: auto;
+            border-radius: 5px;
+        }
+        .image-grid p {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .input-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        h1, h3 {
+            color: #4a148c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Renal Image Quality Classifier</h1>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" name="name" id="name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="scholar_id">Scholar ID:</label>
+                <input type="text" name="scholar_id" id="scholar_id" class="form-control" required>
+            </div>
+            
+            <input type="file" name="files[]" id="files" multiple accept="image/jpeg,image/png,image/gif" required>
+            <br>
+            <span class="input-info">Upload up to 8 images for classification</span>
+            <br>
+            <button type="submit" class="btn btn-primary">Run Classifier</button>
+        </form>
+        <br>
+
+        {% if predicted_classes %}
+        <h3>Predicted Classes:</h3>
+        <div class="image-grid">
+            {% for i in range(predicted_classes|length) %}
+            <div>
+                <img src="{{ file_urls[i] }}" alt="{{ predicted_classes[i] }}">
+                <p>{{ predicted_classes[i] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+<!-- Feedback section -->
+<hr>
+<h3>Student Feedback</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Label</th>
+            <th scope="col">Feedback</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for feedback_list, predicted_label in zip(feedback_messages, predicted_classes) %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>
+                {% for label in predicted_label.split(", ") %}
+                {{ label }}<br>
+                {% endfor %}
+            </td>
+            <td>
+                {% for feedback in feedback_list %}
+                {{ feedback }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    </div>
+</body>
+</html>
