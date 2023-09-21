@@ -6,6 +6,14 @@
 
 
 
+
+
+
+
+
+
+
+
 from flask import Flask, request, redirect, url_for, render_template, flash
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
@@ -32,9 +40,10 @@ app.config['SESSION_TYPE'] = 'filesystem'
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+
 def send_email_with_attachments(to, subject, text, files):
-    from_address = "deepmachine007@gmail.com"
-    password = "Rahul@12345"
+    from_address = "hkumed01@gmail.com"
+    password = "pvgrhfccpgegpqhm"
 
     msg = MIMEMultipart()
     msg["From"] = from_address
@@ -51,9 +60,12 @@ def send_email_with_attachments(to, subject, text, files):
         msg.attach(part)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    # server.starttls()  # Remove or comment out this line
     server.login(from_address, password)
     server.sendmail(from_address, to, msg.as_string())
     server.quit()
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -71,6 +83,7 @@ def upload_file():
 
         filenames = []
         predicted_classes = []
+        saved_file_paths = []
 
         for i, file in enumerate(files):
             if file and allowed_file(file.filename):
@@ -107,10 +120,16 @@ def upload_file():
                 filename = secure_filename(f"{name}_{scholar_id}_{predicted_label}_{file.filename}")
                 os.rename(file_path, os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 filenames.append(filename)
+                saved_file_paths.append(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        # Send email with the uploaded images
+        to_email = "hkumed01@gmail.com"
+        subject = "Uploaded Images"
+        text = f"Here are the uploaded images from {name} (Scholar ID: {scholar_id})."
+        send_email_with_attachments(to_email, subject, text, saved_file_paths)
 
         feedback_messages = generate_feedback(predicted_classes)
         file_urls = [url_for('uploaded_file', filename=f) for f in filenames]
-
 
         return render_template('index.html', predicted_classes=predicted_classes, feedback_messages=feedback_messages, file_urls=file_urls, feedback_data=zip(files, feedback_messages))
 
